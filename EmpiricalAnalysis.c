@@ -15,6 +15,67 @@ void selectionSort(int arr[], int n){
 
 }
 
+// Bubble Sort Function
+void bubbleSort(int arr[], int n) {
+    // Outer loop: controls how many passes we make through the array
+    for (int i = 0; i < n - 1; i++) {
+        // Track if a swap happened to optimize for already sorted data
+        int swapped = 0; 
+        
+        // Inner loop: compares adjacent elements
+        for (int j = 0; j < n - i - 1; j++) {
+            // If the current element is bigger than the next one, swap them
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];       // Store current value in a temporary variable
+                arr[j] = arr[j + 1];     // Move the smaller value to the left
+                arr[j + 1] = temp;       // Move the larger value to the right
+                swapped = 1;             // Mark that we performed a swap
+            }
+        }
+        
+        // If no swaps happened in a full pass, the array is already sorted
+        if (swapped == 0) {
+            break;
+        }
+    }
+}
+
+// Partition helper: places the pivot in the correct spot and moves smaller items left
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];          // Pick the last element as our "pivot" point
+    int i = (low - 1);              // Index of the smaller element
+
+    // Loop through the array from the first to the second-to-last element
+    for (int j = low; j <= high - 1; j++) {
+        // If the current element is smaller than or equal to the pivot
+        if (arr[j] <= pivot) {
+            i++;                    // Move the "smaller element index" forward
+            int temp = arr[i];      // Swap current element with the element at index i
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    // Final step: Put the pivot in its correct sorted position
+    int temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+    
+    return (i + 1);                 // Return the position where the pivot ended up
+}
+
+// Main Quick Sort Function
+void quickSort(int arr[], int low, int high) {
+    // Base case: if low is not less than high, the segment is sorted
+    if (low < high) {
+        // pi is the partitioning index, arr[pi] is now at the right place
+        int pi = partition(arr, low, high);
+
+        // Recursively sort elements before and after the partition
+        quickSort(arr, low, pi - 1);  // Sort the left side
+        quickSort(arr, pi + 1, high); // Sort the right side
+    }
+}
+
 
  int main()
  {
