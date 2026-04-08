@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 
 //=========================================================================================
@@ -226,7 +228,7 @@ void heapSort(int arr[], int n) {
  {
     const unsigned long int MAX_RANGE = 10000UL;
     int N = 0;
-
+    int arr[N]; // Declare the array to hold the elements to sort   
     printf("Enter the number of elements to sort: ");
     scanf("%d", &N);
 
@@ -235,8 +237,30 @@ void heapSort(int arr[], int n) {
         return 1; // Exit with an error code
     }
 
+    int choice;
     printf("Select Data Generation Method:\n");
     printf("1. Random Generated Data\n");
     printf("2. Increasing Sequence\n");
+    printf("Enter: ");
+    scanf("%d", &choice);
 
- }
+    if (choice != 1 && choice != 2) {
+        printf("Invalid choice. Please select either 1 or 2.\n");
+        return 1; // Exit with an error code
+    }
+    if (choice==2)
+    {
+        for (int i = 0; i < N; i++) {
+            arr[i] = i + 1; // Fill the array with increasing sequence
+        }
+        // You can call sorting functions here to test with the increasing sequence
+    }
+    else if (choice==1)
+    {
+        for (int i = 0; i < N; i++) {
+            arr[i] = rand() % MAX_RANGE; // Fill the array with random numbers
+        }
+        // You can call sorting functions here to test with the random data
+
+    }
+    }
