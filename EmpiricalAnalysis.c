@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+//Selection Sort Function
 void selectionSort(int arr[], int n){
     int i, j, min_idx;
     for (i = 0; i < n-1; i++)
@@ -15,7 +16,6 @@ void selectionSort(int arr[], int n){
     }
 
 }
-
 
 
 // Bubble Sort Function
@@ -42,6 +42,86 @@ void bubbleSort(int arr[], int n) {
         }
     }
 }
+
+//Insertion Sort Function
+void insertionSort(int arr[], int n) {
+    int i, key, j;
+
+    for (i = 1; i < n; i++) {
+        key = arr[i];        // Element to be inserted
+        j = i - 1;
+
+        // Move elements of arr[0..i-1] that are greater than key
+        // to one position ahead of their current position
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+
+        arr[j + 1] = key;   // Insert key at correct position
+    }
+}
+
+
+
+// Merge Sort Function
+void merge(int arr[], int left, int mid, int right) {
+    int i, j, k;
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    // Temporary arrays
+    int L[n1], R[n2];
+
+    // Copy data to temp arrays
+    for (i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[mid + 1 + j];
+
+    // Merge the temp arrays
+    i = 0; j = 0; k = left;
+
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    // Copy remaining elements of L[]
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    // Copy remaining elements of R[]
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+// Recursive merge sort function
+void mergeSort(int arr[], int left, int right) {
+    if (left < right) {
+        int mid = (left + right) / 2;
+
+        // Sort first and second halves
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+
+        // Merge the sorted halves
+        merge(arr, left, mid, right);
+    }
+}
+
 
 // Partition helper: places the pivot in the correct spot and moves smaller items left
 int partition(int arr[], int low, int high) {
@@ -79,7 +159,7 @@ void quickSort(int arr[], int low, int high) {
     }
 }
 
-// Function to heapify a subtree rooted at index i
+// Heapify function to maintain the heap property
 void heapify(int arr[], int n, int i) {
     int largest = i;        // Initialize largest as root
     int left = 2 * i + 1;   // left child
