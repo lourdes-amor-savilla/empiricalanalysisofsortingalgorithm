@@ -1,6 +1,10 @@
 #include <stdio.h>
 
+
+//=========================================================================================
 //Selection Sort Function
+//========================================================================================
+
 void selectionSort(int arr[], int n){
     int i, j, min_idx;
     for (i = 0; i < n-1; i++)
@@ -17,8 +21,10 @@ void selectionSort(int arr[], int n){
 
 }
 
-
+//===========================================================================================
 // Bubble Sort Function
+//===========================================================================================
+
 void bubbleSort(int arr[], int n) {
     // Outer loop: controls how many passes we make through the array
     for (int i = 0; i < n - 1; i++) {
@@ -43,7 +49,11 @@ void bubbleSort(int arr[], int n) {
     }
 }
 
+
+//===========================================================================================
 //Insertion Sort Function
+//===========================================================================================
+
 void insertionSort(int arr[], int n) {
     int i, key, j;
 
@@ -63,8 +73,10 @@ void insertionSort(int arr[], int n) {
 }
 
 
-
+//===========================================================================================
 // Merge Sort Function
+//===========================================================================================
+
 void merge(int arr[], int left, int mid, int right) {
     int i, j, k;
     int n1 = mid - left + 1;
@@ -122,6 +134,9 @@ void mergeSort(int arr[], int left, int right) {
     }
 }
 
+//===========================================================================================
+// QUICK SORT
+//===========================================================================================
 
 // Partition helper: places the pivot in the correct spot and moves smaller items left
 int partition(int arr[], int low, int high) {
@@ -158,6 +173,10 @@ void quickSort(int arr[], int low, int high) {
         quickSort(arr, pi + 1, high); // Sort the right side
     }
 }
+
+//===========================================================================================
+// HEAP SORT
+//===========================================================================================
 
 // Heapify function to maintain the heap property
 void heapify(int arr[], int n, int i) {
@@ -202,7 +221,22 @@ void heapSort(int arr[], int n) {
     }
 }
 
+
  int main()
  {
+    const unsigned long int MAX_RANGE = 10000UL;
+    int N = 0;
+
+    printf("Enter the number of elements to sort: ");
+    scanf("%d", &N);
+
+    if (N <= 0) {
+        printf("Please enter a positive integer for the number of elements.\n");
+        return 1; // Exit with an error code
+    }
+
+    printf("Select Data Generation Method:\n");
+    printf("1. Random Generated Data\n");
+    printf("2. Increasing Sequence\n");
 
  }
