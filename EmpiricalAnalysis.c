@@ -223,44 +223,115 @@ void heapSort(int arr[], int n) {
     }
 }
 
+int main() {
+    // MAX_RANGE must be an unsigned long int constant
+    const unsigned long int MAX_RANGE = 1000000UL;
+    int N, choice, X;
+    
+    // Performance measurement variables
+    clock_t start, end;
+    double cpu_time_used;
 
- int main()
- {
-    const unsigned long int MAX_RANGE = 10000UL;
-    int N = 0;
-    int arr[N]; // Declare the array to hold the elements to sort   
-    printf("Enter the number of elements to sort: ");
-    scanf("%d", &N);
-
-    if (N <= 0) {
-        printf("Please enter a positive integer for the number of elements.\n");
-        return 1; // Exit with an error code
+    // Prompt for the number of integers (N)
+    printf("Enter the number of integers to be sorted (N): ");
+    if (scanf("%d", &N) != 1 || N <= 0) {
+        printf("Invalid input.\n");
+        return 1;
     }
 
-    int choice;
-    printf("Select Data Generation Method:\n");
-    printf("1. Random Generated Data\n");
-    printf("2. Increasing Sequence\n");
-    printf("Enter: ");
+    // Allocate memory for the arrays
+    int *original = (int *)malloc(N * sizeof(int));
+    int *temp = (int *)malloc(N * sizeof(int));
+    if (original == NULL || temp == NULL) {
+        printf("Memory allocation failed.\n");
+        return 1;
+    }
+
+    // Data generation selection
+    printf("Select Data Generation Method:\n1. Randomly Generated Integers\n2. Increasing Sequence\nEnter choice: ");
     scanf("%d", &choice);
 
-    if (choice != 1 && choice != 2) {
-        printf("Invalid choice. Please select either 1 or 2.\n");
-        return 1; // Exit with an error code
-    }
-    if (choice==2)
-    {
+    if (choice == 1) {
+        // Option 1: Random data
+        srand(time(NULL));
         for (int i = 0; i < N; i++) {
-            arr[i] = i + 1; // Fill the array with increasing sequence
+            original[i] = rand() % (MAX_RANGE + 1);
         }
-        // You can call sorting functions here to test with the increasing sequence
-    }
-    else if (choice==1)
-    {
+    } else if (choice == 2) {
+        // Option 2: User provides starting number X for increasing sequence
+        printf("Enter starting value X: ");
+        scanf("%d", &X);
         for (int i = 0; i < N; i++) {
-            arr[i] = rand() % MAX_RANGE; // Fill the array with random numbers
+            original[i] = X + i;
         }
-        // You can call sorting functions here to test with the random data
+    } else {
+        printf("Invalid choice.\n");
+        free(original); free(temp);
+        return 1;
+    }
 
+    // Execution of the six sorting algorithms
+    
+    // SELECTION SORT
+    for (int i = 0; i < N; i++) temp[i] = original[i];
+    start = clock();
+    selectionSort(temp, N);
+    end = clock();
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Selection Sort: %f seconds\n", cpu_time_used);
+
+    // BUBBLE SORT
+    for (int i = 0; i < N; i++) temp[i] = original[i];
+    start = clock();
+    bubbleSort(temp, N);
+    end = clock();
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Bubble Sort: %f seconds\n", cpu_time_used);
+
+    // INSERTION SORT
+    for (int i = 0; i < N; i++) temp[i] = original[i];
+    start = clock();
+    insertionSort(temp, N);
+    end = clock();
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Insertion Sort: %f seconds\n", cpu_time_used);
+
+    // MERGESORT
+    for (int i = 0; i < N; i++) temp[i] = original[i];
+    start = clock();
+    mergeSort(temp, 0, N - 1);
+    end = clock();
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Mergesort: %f seconds\n", cpu_time_used);
+
+    // QUICKSORT
+    for (int i = 0; i < N; i++) temp[i] = original[i];
+    start = clock();
+    quickSort(temp, 0, N - 1);
+    end = clock();
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Quicksort: %f seconds\n", cpu_time_used);
+
+    // HEAPSORT
+    for (int i = 0; i < N; i++) temp[i] = original[i];
+    start = clock();
+    heapSort(temp, N);
+    end = clock();
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Heapsort: %f seconds\n", cpu_time_used);
+
+    // Output file generation
+    FILE *fout = fopen("output.txt", "w");
+    if (fout != NULL) {
+        fprintf(fout, "Original values:\n");
+        for (int i = 0; i < N; i++) fprintf(fout, "%d ", original[i]);
+        fprintf(fout, "\n\nSorted values (Final Run):\n");
+        for (int i = 0; i < N; i++) fprintf(fout, "%d ", temp[i]);
+        fclose(fout);
+        printf("\nOriginal and sorted lists saved to 'output.txt'.\n");
     }
-    }
+
+    free(original);
+    free(temp);
+    return 0;
+}
