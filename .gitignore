@@ -1,0 +1,11 @@
+# Build artifacts from C code
+*.o
+*.exe
+*.dll
+*.so
+*.dylib
+*.txt
+a.out
+
+# VS Code settings
+.vscode/

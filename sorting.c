@@ -187,134 +187,179 @@ void heapSort(int arr[], int n) {
 
 int main() {
     const unsigned long int MAX_RANGE = 1000000UL;
-    int N, choice, X;
+    int N, choice, X, fileChoice;
+    char filename[100];
+    char continueChoice;
+    char *mode;
     
     clock_t start, end;
-    double cpu_time_used;
+    double timeTaken;
+    const char* algNames[] = {"Selection Sort", "Bubble Sort", "Insertion Sort", 
+                              "Merge Sort", "Quick Sort", "Heap Sort"};
 
     printf("==============================================\n");
     printf("  SORTING ALGORITHM EMPIRICAL ANALYSIS\n");
     printf("==============================================\n\n");
 
-    // USER INPUT: Get N
-    printf("Enter the number of integers to be sorted (N): ");
-    if (scanf("%d", &N) != 1 || N <= 0) {
-        printf("Invalid input.\n");
-        return 1;
-    }
+    // Ask for filename once at the start of the session
+    printf("Enter the name for your output file (e.g., Results_Log.txt): ");
+    scanf("%s", filename);
 
-    // Allocate memory for the arrays
-    int *original = (int *)malloc(N * sizeof(int));
-    int *temp = (int *)malloc(N * sizeof(int));
-    if (original == NULL || temp == NULL) {
-        printf("Memory allocation failed.\n");
-        return 1;
-    }
+    do {
+        printf("\n--- NEW TEST RUN ---\n");
+        printf("File Options for '%s':\n", filename);
+        printf("1. Create New / Overwrite\n");
+        printf("2. Append to Existing\n");
+        printf("Enter choice (1 or 2): ");
+        scanf("%d", &fileChoice);
 
-    // USER INPUT: Data generation selection
-    printf("\nSelect Data Generation Method:\n");
-    printf("1. Randomly Generated Integers\n");
-    printf("2. Increasing Sequence\n");
-    printf("Enter choice (1 or 2): ");
-    scanf("%d", &choice);
+        mode = (fileChoice == 2) ? "a" : "w";
 
-    if (choice == 1) {
-        // Option 1: Random data
-        srand(time(NULL));
-        for (int i = 0; i < N; i++) {
-            original[i] = rand() % (MAX_RANGE + 1);
+        printf("\nEnter the number of integers to be sorted (N): ");
+        if (scanf("%d", &N) != 1 || N <= 0) {
+            printf("Invalid input. Ending run.\n");
+            break;
         }
-        printf("\n[Data Generation] Random integers generated from [0, %lu]\n", MAX_RANGE);
-    } else if (choice == 2) {
-        // Option 2: Increasing sequence
-        printf("Enter starting value X: ");
-        scanf("%d", &X);
-        for (int i = 0; i < N; i++) {
-            original[i] = X + i;
+
+        int *original = (int *)malloc(N * sizeof(int));
+        int *temp = (int *)malloc(N * sizeof(int));
+        if (original == NULL || temp == NULL) {
+            printf("Memory allocation failed.\n");
+            return 1;
         }
-        printf("\n[Data Generation] Increasing sequence generated starting from %d\n", X);
-    } else {
-        printf("Invalid choice.\n");
-        free(original); 
+
+        printf("\nSelect Data Generation Method:\n");
+        printf("1. Randomly Generated Integers\n");
+        printf("2. Increasing Sequence\n");
+        printf("Enter choice (1 or 2): ");
+        scanf("%d", &choice);
+
+        if (choice == 1) {
+            srand(time(NULL));
+            for (int i = 0; i < N; i++) {
+                original[i] = rand() % (MAX_RANGE + 1);
+            }
+            printf("\n[Data Generation] Random integers generated from [0, %lu]\n", MAX_RANGE);
+        } else if (choice == 2) {
+            printf("Enter starting value X: ");
+            scanf("%d", &X);
+            for (int i = 0; i < N; i++) {
+                original[i] = X + i;
+            }
+            printf("\n[Data Generation] Increasing sequence starting from %d\n", X);
+        }
+
+        // Open file to log the Unsorted Array first
+        FILE *fout = fopen(filename, mode);
+        if (fout != NULL) {
+            fprintf(fout, "========================================================\n");
+            fprintf(fout, "TEST RUN: N = %d | Mode: %s\n", N, (choice == 1 ? "Random" : "Increasing"));
+            fprintf(fout, "========================================================\n\n");
+            fprintf(fout, "UNSORTED ORIGINAL ARRAY:\n");
+            for (int i = 0; i < N; i++) {
+                fprintf(fout, "%d ", original[i]);
+                if ((i + 1) % 20 == 0) fprintf(fout, "\n");
+            }
+            fprintf(fout, "\n\n--------------------------------------------------------\n");
+        }
+
+        printf("\n%-20s %20s\n", "Algorithm", "Time (seconds)");
+        printf("%-20s %20s\n", "----------", "--------------");
+
+        // --- SORTING AND INDIVIDUAL LOGGING ---
+
+        // 1. Selection Sort
+        for (int i = 0; i < N; i++) temp[i] = original[i];
+        start = clock(); selectionSort(temp, N); end = clock();
+        timeTaken = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("%-20s %20.6f\n", algNames[0], timeTaken);
+        if (fout) {
+            fprintf(fout, ">>> ALGORITHM: %s\n", algNames[0]);
+            fprintf(fout, "TIME TAKEN: %.6f seconds\n", timeTaken);
+            fprintf(fout, "SORTED ARRAY:\n");
+            for (int i = 0; i < N; i++) { fprintf(fout, "%d ", temp[i]); if ((i + 1) % 20 == 0) fprintf(fout, "\n"); }
+            fprintf(fout, "\n\n");
+        }
+
+        // 2. Bubble Sort
+        for (int i = 0; i < N; i++) temp[i] = original[i];
+        start = clock(); bubbleSort(temp, N); end = clock();
+        timeTaken = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("%-20s %20.6f\n", algNames[1], timeTaken);
+        if (fout) {
+            fprintf(fout, ">>> ALGORITHM: %s\n", algNames[1]);
+            fprintf(fout, "TIME TAKEN: %.6f seconds\n", timeTaken);
+            fprintf(fout, "SORTED ARRAY:\n");
+            for (int i = 0; i < N; i++) { fprintf(fout, "%d ", temp[i]); if ((i + 1) % 20 == 0) fprintf(fout, "\n"); }
+            fprintf(fout, "\n\n");
+        }
+
+        // 3. Insertion Sort
+        for (int i = 0; i < N; i++) temp[i] = original[i];
+        start = clock(); insertionSort(temp, N); end = clock();
+        timeTaken = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("%-20s %20.6f\n", algNames[2], timeTaken);
+        if (fout) {
+            fprintf(fout, ">>> ALGORITHM: %s\n", algNames[2]);
+            fprintf(fout, "TIME TAKEN: %.6f seconds\n", timeTaken);
+            fprintf(fout, "SORTED ARRAY:\n");
+            for (int i = 0; i < N; i++) { fprintf(fout, "%d ", temp[i]); if ((i + 1) % 20 == 0) fprintf(fout, "\n"); }
+            fprintf(fout, "\n\n");
+        }
+
+        // 4. Merge Sort
+        for (int i = 0; i < N; i++) temp[i] = original[i];
+        start = clock(); mergeSort(temp, 0, N - 1); end = clock();
+        timeTaken = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("%-20s %20.6f\n", algNames[3], timeTaken);
+        if (fout) {
+            fprintf(fout, ">>> ALGORITHM: %s\n", algNames[3]);
+            fprintf(fout, "TIME TAKEN: %.6f seconds\n", timeTaken);
+            fprintf(fout, "SORTED ARRAY:\n");
+            for (int i = 0; i < N; i++) { fprintf(fout, "%d ", temp[i]); if ((i + 1) % 20 == 0) fprintf(fout, "\n"); }
+            fprintf(fout, "\n\n");
+        }
+
+        // 5. Quick Sort
+        for (int i = 0; i < N; i++) temp[i] = original[i];
+        start = clock(); quickSort(temp, 0, N - 1); end = clock();
+        timeTaken = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("%-20s %20.6f\n", algNames[4], timeTaken);
+        if (fout) {
+            fprintf(fout, ">>> ALGORITHM: %s\n", algNames[4]);
+            fprintf(fout, "TIME TAKEN: %.6f seconds\n", timeTaken);
+            fprintf(fout, "SORTED ARRAY:\n");
+            for (int i = 0; i < N; i++) { fprintf(fout, "%d ", temp[i]); if ((i + 1) % 20 == 0) fprintf(fout, "\n"); }
+            fprintf(fout, "\n\n");
+        }
+
+        // 6. Heap Sort
+        for (int i = 0; i < N; i++) temp[i] = original[i];
+        start = clock(); heapSort(temp, N); end = clock();
+        timeTaken = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("%-20s %20.6f\n", algNames[5], timeTaken);
+        if (fout) {
+            fprintf(fout, ">>> ALGORITHM: %s\n", algNames[5]);
+            fprintf(fout, "TIME TAKEN: %.6f seconds\n", timeTaken);
+            fprintf(fout, "SORTED ARRAY:\n");
+            for (int i = 0; i < N; i++) { fprintf(fout, "%d ", temp[i]); if ((i + 1) % 20 == 0) fprintf(fout, "\n"); }
+            fprintf(fout, "\n\n");
+        }
+
+        if (fout) {
+            fprintf(fout, "--- END OF RUN ---\n\n\n");
+            fclose(fout);
+            printf("\nResults logged to '%s'.\n", filename);
+        }
+
+        free(original);
         free(temp);
-        return 1;
-    }
 
-    printf("\n==============================================\n");
-    printf("  SORTING AND TIMING RESULTS FOR N = %d\n", N);
-    printf("==============================================\n");
-    printf("%-20s %20s\n", "Algorithm", "Time (seconds)");
-    printf("%-20s %20s\n", "----------", "--------------");
+        printf("\nWould you like to perform another run? (y/n): ");
+        scanf(" %c", &continueChoice);
 
-    // SELECTION SORT
-    for (int i = 0; i < N; i++) temp[i] = original[i];
-    start = clock();
-    selectionSort(temp, N);
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("%-20s %20.6f\n", "Selection Sort", cpu_time_used);
+    } while (continueChoice == 'y' || continueChoice == 'Y');
 
-    // BUBBLE SORT
-    for (int i = 0; i < N; i++) temp[i] = original[i];
-    start = clock();
-    bubbleSort(temp, N);
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("%-20s %20.6f\n", "Bubble Sort", cpu_time_used);
-
-    // INSERTION SORT
-    for (int i = 0; i < N; i++) temp[i] = original[i];
-    start = clock();
-    insertionSort(temp, N);
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("%-20s %20.6f\n", "Insertion Sort", cpu_time_used);
-
-    // MERGESORT
-    for (int i = 0; i < N; i++) temp[i] = original[i];
-    start = clock();
-    mergeSort(temp, 0, N - 1);
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("%-20s %20.6f\n", "Merge Sort", cpu_time_used);
-
-    // QUICKSORT
-    for (int i = 0; i < N; i++) temp[i] = original[i];
-    start = clock();
-    quickSort(temp, 0, N - 1);
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("%-20s %20.6f\n", "Quick Sort", cpu_time_used);
-
-    // HEAPSORT
-    for (int i = 0; i < N; i++) temp[i] = original[i];
-    start = clock();
-    heapSort(temp, N);
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("%-20s %20.6f\n", "Heap Sort", cpu_time_used);
-
-    printf("\n");
-
-    // OUTPUT FILE: Write original and sorted values
-    FILE *fout = fopen("output.txt", "w");
-    if (fout != NULL) {
-        fprintf(fout, "Original values:\n");
-        for (int i = 0; i < N; i++) {
-            fprintf(fout, "%d ", original[i]);
-            if ((i + 1) % 20 == 0) fprintf(fout, "\n");
-        }
-        fprintf(fout, "\n\nSorted values (Final Run):\n");
-        for (int i = 0; i < N; i++) {
-            fprintf(fout, "%d ", temp[i]);
-            if ((i + 1) % 20 == 0) fprintf(fout, "\n");
-        }
-        fprintf(fout, "\n");
-        fclose(fout);
-        printf("Original and sorted lists saved to 'output.txt'.\n");
-    }
-
-    free(original);
-    free(temp);
+    printf("\nExiting. GGWP!\n");
     return 0;
 }
